@@ -1,43 +1,69 @@
 #include <iostream>
-#include <limits.h>
-#include <vector>
 using namespace std;
-void fun(vector<vector<int>>& mat);
-const int INF = INT_MAX; 
+#define MAX 10
+#define INF 999
 
-int main(){
-    int V=4;
-    vector<vector<int>> graph = {
-        {0,5,INF,10},
-        {INF, 0,3,INF},
-        {INF, INF, 0,1},
-        {INF, INF, INF, 0}
-    };
-    fun(graph);
-    for (int i=0;i<V;i++) {
-        for (int j=0;j<V;j++) {
-            if (graph[i][j]==INF)
-                cout << "INF\t";
-            else
-                cout << graph[i][j] << "\t";
+int i,j,k,cost[MAX][MAX];
+
+#define min(x,y) (((x)>(y) ? y: x))
+
+/*
+int min(int a, int b) {
+    return (a < b) ? a : b;
+}
+*/
+
+void create(int cost[MAX][MAX], int n){
+    cout << "Enter cost Matrix (999 for infinity)\n";
+    for ( i = 0; i < n; i++){
+        for ( j = 0; j < n; j++){
+            cin >> cost[i][j];
         }
-        cout<<endl;
     }
-    return 0;
 }
 
-void fun(vector<vector<int>>& mat){
-    int n=mat.size();
-    for(int k=0;k<n;k++){
-        for(int i=0;i<n;i++){
-            for(int j=0;j<n;j++){
-                if (mat[i][k] != INF && mat[k][j] != INF)
-                    mat[i][j]=min(mat[i][j],mat[i][k]+mat[k][j]);
+void floyd(int cost[MAX][MAX], int n){
+    for ( k = 0; k < n; k++){
+        for ( i = 0; i < n; i++){
+            for ( j = 0; j < n; j++){
+                cost[i][j] = min(cost[i][j], (cost[i][k] + cost[k][j]));
             }
         }
     }
 }
+/*
+void floyd(int cost[MAX][MAX], int n){
+    for (int i = 0; i < n; i++){
+        for (int j = 0; j < n; j++){
+            for (int k = 0; k < n; k++){
+                cost[j][k] = min(cost[j][k], cost[j][i] + cost[i][k]);
+            }
+        }
+    }
+}
+*/
 
+void print(int cost[MAX][MAX], int n){
+    cout <<"After applying Floyd's Algorithm :\n";
+    for (i = 0; i < n; i++){
+        for ( j = 0; j < n; j++){
+            if (cost[i][j] == INF)
+                cout << "INF ";
+            else
+                cout << cost[i][j] << " ";
+        }
+        cout << "\n";
+    }
+}
+
+int main(){
+    int n;
+    cout << "Enter No of Vertices: ";
+    cin >> n;
+    create(cost, n);
+    floyd(cost, n);
+    print(cost, n);
+}
 /*
 --------------Algotithm----------------
 Algorithm:

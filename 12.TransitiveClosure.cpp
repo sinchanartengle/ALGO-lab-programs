@@ -3,35 +3,58 @@ b. Compute the transitive closure of a given directed graph using Warshall’s a
 */
 
 #include <iostream>
-#include <limits.h>
-#include <vector>
 using namespace std;
-void fun(vector<vector<int>>& mat);
+#define MAX 10
 
-int main(){
-    int V=4;
-    vector<vector<int>> graph = 
-    {{0, 1, 1, 0}, {0, 0, 1, 0}, {1, 0, 0, 1}, {0, 0, 0, 0}};
-    fun(graph);
-    for (int i=0; i<V; i++) {
-      for (int j=0; j<V; j++) {
-        cout << graph[i][j] << " ";
-      }
-      cout << endl;
+int i,j,k,cost[MAX][MAX];
+
+void createGraph(int cost[MAX][MAX], int n){
+    cout << "Enter cost Matrix: \n";
+    for (i = 0; i < n; i++){
+        for (j = 0; j < n; j++){
+            cin >> cost[i][j];
+        }
     }
-    return 0;
 }
 
-void fun(vector<vector<int>>& mat){
-    int n=mat.size();
-    for(int k=0;k<n;k++){
-        for(int i=0;i<n;i++){
-            for(int j=0;j<n;j++){
-                if (mat[i][k] == 1 && mat[k][j] == 1)
-                    mat[i][j]=1;
+void warshall(int cost[MAX][MAX], int n){
+    for (k = 0; k < n; k++){
+        for (i = 0; i < n; i++){
+            for (j = 0; j < n; j++){
+                cost[i][j] = cost[i][j] || (cost[i][k] && cost[k][j]);
             }
         }
     }
+}
+/*
+void warshall(int adj[MAX][MAX], int n){
+    for (int i = 0; i < n; i++){
+        for (int j = 0; j < n; j++){
+            for (int k = 0; k < n; k++){
+                adj[j][k] = adj[j][k] || (adj[j][i] && adj[i][k]);
+            }
+        }
+    }
+}
+*/
+
+void printGraph(int cost[MAX][MAX], int n){
+    cout << "After Applying Warshall's Transitive Closure:\n";
+    for (i = 0; i < n; i++){
+        for (j = 0; j < n; j++){
+            cout << cost[i][j] << " ";
+        }
+        cout << "\n";
+    }
+}
+
+int main(){
+    int n;
+    cout << "Enter No of Vertices: ";
+    cin >> n;
+    createGraph(cost, n);
+    warshall(cost, n);
+    printGraph(cost, n);
 }
 
 /*

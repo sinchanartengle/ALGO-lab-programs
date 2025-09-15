@@ -1,74 +1,55 @@
 /*
 Implement N Queen’s problem using Back Tracking
 */
-#include <iostream>
-#include <vector>
-#include <algorithm>
-
+#include<iostream>
 using namespace std;
+#define MAX 10
 
-// Function to place queens on the board row by row
-void queen(vector<vector<bool>>& board,int row);
-// Function to check whether placing a queen at board[row][col] is safe
-bool isSafe(vector<vector<bool>>& board,int row,int col);
-// Function to print the board
-void display(vector<vector<bool>>& board);
+int board[MAX],i,j;
 
-int main(){
-    int n;
-    cout<<"\nEnter the size of the board(N x N): ";
-    cin>>n;
-    vector<vector<bool>> board(n, vector<bool>(n, false));
-    // Start from the first row (row = 0)
-    queen(board,0);
-    return 0;
-}
-
-void queen(vector<vector<bool>>& board,int row){
-    if(row==board.size()){
-        display(board);
-        cout<<"\n";
-        return;
-    }
-    // Try placing a queen in each column of the current row
-    for(int col=0;col<board.size();col++){
-        //Check if placing Queen is Safe
-        if(isSafe(board,row,col)){
-            board[row][col]=true; // Place the queen
-            queen(board,row+1);   //Move to the next row
-            board[row][col]=false; //remove the queen and try next col
+bool isSafe(int row,int col){
+    for(i=0;i<row;i++){
+        if (board[i] == col || (board[i] - col) == (i - row) || (board[i] - col) == (row - i)) {
+            return false;
         }
-    }
-
-}
-bool isSafe(vector<vector<bool>>& board,int row,int col){
-    //Check for any queen in the same column
-    for(int i=0;i<row;i++){
-        if(board[i][col])
-            return false;
-    }
-    //Check the upper-left diagonal for any queen
-    int maxLeft=min(row,col);
-    for(int i=1;i<=maxLeft;i++){
-        if(board[row-i][col-i])
-            return false;
-    }
-    // Check the upper-right diagonal for any queen
-    int maxRight=min(row,(int)board.size()-col-1);
-    for(int i=1;i<=maxRight;i++){
-        if(board[row-i][col+i])
-            return false;
     }
     return true;
 }
-void display(vector<vector<bool>>& board){
-    for(auto row:board){
-        for(auto element:row){
-            element?cout<<"Q ":cout<<"X ";
+
+void print(int n){
+    for (i=0;i<n;i++) {
+        for (j=0;j<n;j++) {
+            if (board[i] == j)
+                cout <<" Q ";
+            else
+                cout <<" - ";
         }
-        cout<<"\n";
+        cout <<"\n";
+    }
+    cout <<"\n";
+}
+
+void nqueen(int row,int n){
+    if(row==n){
+        print(n);
+        return;
+    }
+    for(int col=0;col<n;col++){
+        if(isSafe(row,col)){
+           board[row]=col;
+           nqueen(row+1,n);
+        }
     }
 }
+
+int main(){
+    int n;
+    cout<<"Enter the No. of Queen's :";
+    cin>>n;
+    nqueen(0,n);
+}
+ 
+
 /*
 Rules:
 1) Only one queen per row.

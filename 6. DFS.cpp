@@ -1,40 +1,44 @@
 /*
 7)b. Check whether a given graph is connected or not using DFS method.   
 */
-#include <iostream>
-#include <queue>
-#include <vector>
+#include<iostream>
 using namespace std;
 
-void dfs(int V,vector<bool>& isVisited,vector<vector<int>>& adjList);
+int visited[10],n,cost[10][10],count=0,i,j;
 
-int main(){
-    vector<vector<int>> adjList = {{1,2}, {0,2,3}, {0,4}, {1,4}, {2,3}};
-    // vector<vector<int>> adjList = {{1},{0},{}};
-     
-    //Retrieving total number of vertices
-    int V=adjList.size();
-    vector<bool> isVisited(V,false);
-    //To count the number of subgraphs
-    int count=0; 
-    for(int node=0;node<V;node++){
-        if(!isVisited[node]){
-            dfs(node,isVisited,adjList);
-            count++;
+void dfs(int source){
+    int i;
+    visited[source]=1;
+    count++;
+    for(i=1;i<=n;i++){
+        if((cost[source][i]==1)&&(visited[i]==0)){
+            dfs(i);
         }
     }
-    count==1 ? cout<< "\nGiven graph is connected." : cout<<"\nGiven graph is disconnected.";
-    return 0;
 }
 
-
-void dfs(int node,vector<bool>& isVisited,vector<vector<int>>& adjList){
-    isVisited[node]=true;
-    for(int item:adjList[node]){
-        if(!isVisited[item]){
-            dfs(item,isVisited,adjList);
-        }
+int main(){
+    int source;
+    cout<<"Enter no. of vertices :";
+    cin>>n;
+    cout<<"Enter the cost matrix (1 for edge & 0 for no-edge)\n";
+     for(i=1;i<=n;i++){
+       for(j=1;j<=n;j++){
+           cin>>cost[i][j];
+       }
     }
+    for(i=1;i<=n;i++)
+        visited[i]=0;
+    
+    cout<<"Enter the Source Vertex :";
+    cin>>source;
+
+    dfs(source);
+    
+    if (count == n)
+      cout <<"The graph is connected";
+    else
+      cout <<"The graph is not connected";
 }
 
 /*

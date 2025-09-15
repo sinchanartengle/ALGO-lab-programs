@@ -2,66 +2,53 @@
 12. Find Minimum Cost Spanning Tree of a given undirected graph using Prim’s algorithm 
 */
 
-#include <iostream>
-#include <vector>
-#include <queue>
-
+#include<iostream>
 using namespace std;
+#define MAX 10
 
-int function(int v,vector<pair<int,int>> adj[]);
+int cost[MAX][MAX];
 
-int main(){
-    
-    int V = 4;
-    // Edge list: each sub-vector contains {u, v, weight}
-    vector<vector<int>> edges = {
-        {0, 1, 10},
-        {1, 3, 15},
-        {2, 3, 4},
-        {2, 0, 6},
-        {0, 3, 5}
-    };
-    vector<pair<int, int>> adj[V];
-    for (const auto& edge : edges) {
-        int u = edge[0], v = edge[1], wt = edge[2];
-        adj[u].push_back({v, wt});
-        adj[v].push_back({u, wt});  // because the graph is undirected
-    }
-    int mstCost = function(V, adj);
-    cout << "Minimum Spanning Tree Cost: " << mstCost << endl;
+void prims(int cost[MAX][MAX],int n){
+    int a=0,b=0,u=0,v=0;
+    int i,j,min,mincost=0;
+    int ne=1;  //ne = no. of edges
+    int visited[10]={0};
+    visited[1]=1;
 
-    return 0;
+    while(ne<n){
+       
+       for(i=1,min=999;i<=n;i++){
+          for(j=1;j<=n;j++){
+               if(cost[i][j]<min){
+                  if(visited[i]!=0){
+                    min=cost[i][j];
+                    a=u=i;
+                    b=v=j;
+                  }
+               }
+          }
+       }
+    if(visited[u]==0 || visited[v]==0){
+            cout << "\nEdge-" <<ne++<< " (" << a << "," << b << ") : " << min;
+            mincost += min;
+            visited[b]=1;
+       }
+       cost[a][b]=cost[b][a]=999;
+   }
+   cout<<"\nMinimum cost :"<<mincost;
 }
 
-int function(int v,vector<pair<int,int>> adj[]){
-    //Min-heap priority queue where each element is a pair {weight, node}
-    //greater<pair<int,int>> ensures the pair with the smallest weight is at the top
-    priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>> pq;
-    //To keep track of visited nodes.
-    vector<bool> isVisited(v,false);
-    //Initial cost of MST is zero.
-    int sum=0;
-
-    pq.push({0,0});
-
-    while(!pq.empty()){
-        auto item=pq.top();
-        pq.pop();
-        int wt=item.first;
-        int node=item.second;
-        if(!isVisited[node]){
-            isVisited[node]=true;
-            sum+=wt;
-            for(auto it: adj[node]){
-                int adjWt=it.second;
-                int adjNode=it.first;
-                if(!isVisited[adjNode]){
-                    pq.push({adjWt,adjNode});
-                }
-            }
-        }
+int main(){
+    int n,i,j;
+    cout<<"Enter the no. of vertices :";
+    cin>>n;
+    cout<<"Enter the cost matrix (999 for no-edge and self loops)\n";
+    for(i=1;i<=n;i++){
+       for(j=1;j<=n;j++){
+           cin>>cost[i][j];
+       }
     }
-    return sum;
+    prims(cost,n);
 }
 
 /*

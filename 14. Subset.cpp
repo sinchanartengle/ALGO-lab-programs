@@ -6,56 +6,48 @@ probleminstance doesn’t have a solution.
 */
 
 #include <iostream>
-#include <vector>
-
 using namespace std;
 
-// index -> current index in arr being considered
-// sum -> current sum of elements in ans
-// ans -> current subset of elements
-// K -> target sum
-// arr -> input array
-bool subsetSum(int,int,vector<int>&,int,vector<int>&);
-int main(){
+int s[10], d, n, set[10], count = 0;
+int flag = 0,i,j;
 
-    int n,K;
-    vector<int> arr,ans;
-    cout<<"\nEnter the number of elements in the set: ";
-    cin>>n;
-    cout<<"\nEnter the elements of the set: ";
-    //read the elements of the set
-    for (int i = 0; i < n; i++) {
-        int x;
-        cin >> x;
-        arr.push_back(x);
-    }
-    cout<<"\nEnter the sum: ";
-    cin>>K;
-    if(!subsetSum(0,0,ans,K,arr)){
-        cout<<"\nNo subsets of given set have sum equal to "<<K;
-    }
-    return 0; 
+void display(int count){
+    cout << "{";
+    for (i=0;i<count;i++)
+        cout << " " << set[i] << " ";
+    cout << "}\n";
 }
-bool subsetSum(int index,int sum,vector<int>& ans,int K,vector<int>& arr){
-    if(index>=arr.size()){
-        if(sum==K){
-            for(int i=0;i<ans.size();i++)
-                cout<<ans[i]<<" ";
-            cout<<"\n";
-            return true;
-        }
-        return false;
+
+void subset(int sum, int i){
+    if (sum == d){
+        flag = 1;
+        display(count);
+        return;
     }
-    // Include current element arr[index] in subset
-    ans.push_back(arr[index]);
-    sum+=arr[index];
-    bool x=subsetSum(index+1,sum,ans,K,arr);
-    ans.pop_back();
-    sum-=arr[index];
-    // Exclude current element arr[index] from subset and recurse
-    bool y=subsetSum(index+1,sum,ans,K,arr);
-    // Return true if any of the two branches found a valid subset
-    return x||y;
+    if (sum > d || i >= n)
+        return;
+    else{
+        set[count] = s[i];
+        count++;
+        subset(sum + s[i], i + 1);
+        count--;
+        subset(sum, i + 1);
+    }
+}
+
+int main()
+{
+    cout << "Enter the No. of elements: ";
+    cin >> n;
+    cout << "Enter the Values: ";
+    for (i=0;i<n;i++)
+        cin >> s[i];
+    cout << "Enter the sum: ";
+    cin >> d;
+    cout << "Solution :\n";
+    subset(0, 0);
+    if (flag == 0)
+        cout << "There is no solution.\n";
 }
 
 /*

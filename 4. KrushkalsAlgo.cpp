@@ -1,100 +1,62 @@
 /*
 11. Find Minimum Cost Spanning Tree of a given undirected graph using Kruskal’s algorithm. 
 */
-#include <iostream>
-#include <vector>
-#include <algorithm>
-
+#include<iostream>
 using namespace std;
+#define MAX 10
 
-int spanningTree(int v,vector<vector<int>> adj);
+int parent[MAX],cost[MAX][MAX];
 
-// Disjoint Set Union (DSU)
-class DisjointSet{
-    vector<int> rank,parent;
-    public:
-        DisjointSet(int n){
-            rank.resize(n+1,0);
-            parent.resize(n+1,0);
-            for(int i=0;i<=n;i++){
-                // Initially each node is its own parent
-                parent[i]=i;
-            }
-        }
-        //Returns the ultimate parent
-        int findUPar(int node){
-            if(node==parent[node])
-                return node;
-            return parent[node]=findUPar(parent[node]);
-        }
-        void unionByRank(int u,int v){
-            // Ultimate parent of u
-            int ultp_u=findUPar(u);
-            // Ultimate parent of v
-            int ultp_v=findUPar(v);
-            if(ultp_u==ultp_v)return;
-            if(rank[ultp_u]<rank[ultp_v]){
-                parent[ultp_u]=ultp_v;
-
-            }
-            else if(rank[ultp_v]<rank[ultp_u]){
-                parent[ultp_v]=ultp_u;
-            }
-            else{
-                parent[ultp_v]=ultp_u;
-                rank[ultp_u]++;
-            }
-            
-        }
-};
-
-int main(){    
-    int V = 4;
-    // Edge list: each sub-vector contains {u, v, weight}
-    vector<vector<int>> edges = {
-        {0, 1, 10},
-        {1, 3, 15},
-        {2, 3, 4},
-        {2, 0, 6},
-        {0, 3, 5}
-    };
-
-    int mstCost = spanningTree(V, edges);
-    cout << "Minimum Spanning Tree Cost: " << mstCost << endl;
-    return 0;
+int find(int i){
+    while(parent[i]>0)
+        i=parent[i];
+     return i;
 }
 
-int spanningTree(int v,vector<vector<int>> adj){
-    DisjointSet ds(v);
-    vector<pair<int,pair<int,int>>> edges;
-    int minStWt=0;
-
-    // Convert edge list to a vector of tuples: {weight, {u, v}}
-    for(auto item : adj){
-            int u=item[0];
-            int v=item[1];
-            int wt=item[2];
-            edges.push_back({wt,{u,v}});
-    }
-
-    // Step 1: Sort edges by weight
-    sort(edges.begin(),edges.end());// O(E*logE)
-
-    // Step 2 & 3: Pick smallest edge, include if no cycle is formed
-    //O(logV)
-    for(auto edge: edges){
-        int wt=edge.first;
-        int u=edge.second.first;
-        int v=edge.second.second;
-        // Check if u and v are in different sets (no cycle)
-        if(ds.findUPar(u) != ds.findUPar(v)){
-            minStWt+=wt;
-            ds.unionByRank(u,v);
-        }
-    }
-    return minStWt;
+void Union(int i,int j){
+    parent[j]=i;
 }
 
+void krushkal(int cost[MAX][MAX],int n){
+    int a=0,b=0,u=0,v=0;
+    int i,j,min,mincost=0;
+    int ne=1; //ne = no. of edges
+
+    while(ne<n){
+       
+       for(i=1,min=999;i<=n;i++){
+          for(j=1;j<=n;j++){
+            if(cost[i][j]<min){
+                min=cost[i][j];
+                a=u=i;
+                b=v=j;
+            }
+       }
+    }
+             u=find(u);
+             v=find(v);
+             if(u!=v){
+                Union(u,v);
+                cout << "\nEdge-"<<ne++<< " (" << a << "," << b << ") : " << min;
+                mincost += min;
+             }
+            cost[a][b]=cost[b][a]=999;
+    }
+    cout<<"\nMinimum cost :"<<mincost;
+}
+
+int main(){
+    int n,i,j;
+    cout<<"Enter the no. of vertices :";
+    cin>>n;
+    cout<<"Enter the cost matrix (999 for no-edge and self loops)\n";
+    for(i=1;i<=n;i++){
+       for(j=1;j<=n;j++){
+           cin>>cost[i][j];
+       }
+    }
+    krushkal(cost,n);
+}
 /*
 Time Complexity:O(E * logE)-where V is the number of vertices and E is the number of edges in the graph.
 Auxiliary Space: O(E+V)-where V is the number of vertices and E is the number of edges in the graph.
